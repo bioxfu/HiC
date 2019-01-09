@@ -32,3 +32,44 @@ mkdir scaf
 cd scaf
 nohup ../3d-dna/run-asm-pipeline.sh ../draft/draft.fa ../aligned/merged_nodups.txt &
 
+# install LACHESIS
+# build boost (using Python2)
+wget https://nchc.dl.sourceforge.net/project/boost/boost/1.52.0/boost_1_52_0.tar.bz2
+tar jxf boost_1_52_0.tar.bz2
+cd boost_1_52_0
+./bootstrap.sh --prefix=$HOME/opt/boost
+./b2
+./b2 install
+cd ..
+# build samtools
+wget https://nchc.dl.sourceforge.net/project/samtools/samtools/0.1.18/samtools-0.1.18.tar.bz2
+tar xjf samtools-0.1.18.tar.bz2
+cd samtools-0.1.18
+make 
+mkdir bam
+cp sam.h bam
+cd ..
+# build LACHESIS
+git clone https://github.com/shendurelab/LACHESIS
+cd LACHESIS
+./configure --with-samtools=$PWD/../samtools-0.1.18/ --with-boost=/cluster/home/xfu/opt/boost
+# edit line 279 of src/include/gtools/Makefile to add samtools path and boost path
+# edit line 283 of src/include/markov/Makefile to add samtools path and boost path
+# for example: INCLUDES = -I/cluster/home/xfu/Project/Gossypium_trilobum/canu/HiC/samtools-0.1.18/ -I/cluster/home/xfu/opt/boost/include
+# edit line 287 of src/include/markov/Makefile to add library path
+# for example: BOOST_LIBS = -lboost_system -lboost_filesystem -lboost_regex -L/cluster/home/xfu/opt/boost/lib 
+make 
+cp Lachesis bin
+# test on sample dataset
+#cd src/bin
+#../Lachesis INIs/test_case.ini
+
+# Aligning the Hi-C reads to the draft assembly
+nohup bash -c "bwa mem -t 30 draft/draft.fa fastq/mianhua_clean_R1.fastq.gz fastq/mianhua_clean_R2.fastq.gz|samtools view -bS - > bwa_out/mianhua.bam" &
+# Filtering the Hi-C reads
+script/PreprocessSAMs.pl bwa_out/mianhua.bam draft/draft.fa
+#Running LACHESIS
+cp example/Lachesis.ini Lachesis.ini
+export PATH=$PWD/LACHESIS/src/bin:$PATH
+nohup Lachesis Lachesis.ini &
+

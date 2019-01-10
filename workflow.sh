@@ -70,4 +70,6 @@ cp example/Lachesis.ini Lachesis.ini
 export PATH=$PWD/LACHESIS/src/bin:$PATH
 Lachesis Lachesis.ini
 script/CreateScaffoldedFasta.pl draft/draft.fa Lachesis_out
-
+mv heatmap.chrom_breaks.txt heatmap.txt Lachesis_out
+Rscript script/heatmap.MWAH.R
+Rscript script/heatmap.R

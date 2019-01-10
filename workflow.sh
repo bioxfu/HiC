@@ -60,9 +60,6 @@ cd LACHESIS
 # for example: BOOST_LIBS = -lboost_system -lboost_filesystem -lboost_regex -L/cluster/home/xfu/opt/boost/lib 
 make 
 cp Lachesis bin
-# test on sample dataset
-#cd src/bin
-#../Lachesis INIs/test_case.ini
 
 # Aligning the Hi-C reads to the draft assembly
 nohup bash -c "bwa mem -t 30 draft/draft.fa fastq/mianhua_clean_R1.fastq.gz fastq/mianhua_clean_R2.fastq.gz|samtools view -bS - > bwa_out/mianhua.bam" &
@@ -71,5 +68,6 @@ script/PreprocessSAMs.pl bwa_out/mianhua.bam draft/draft.fa
 #Running LACHESIS
 cp example/Lachesis.ini Lachesis.ini
 export PATH=$PWD/LACHESIS/src/bin:$PATH
-nohup Lachesis Lachesis.ini &
+Lachesis Lachesis.ini
+script/CreateScaffoldedFasta.pl draft/draft.fa Lachesis_out
 

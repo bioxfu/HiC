@@ -144,5 +144,5 @@ run_cmd( "$bedtools intersect -abam $head.bam -b $BED_RE_file > $head.REduced.ba
 #run_cmd( "${picard_head}SortSam.jar $opts I=$head.REduced.bam O=$head.REduced.sort_coord.bam SO=coordinate" );
 #run_cmd( "${picard_head}MarkDuplicates.jar $opts I=$head.REduced.sort_coord.bam O=$head.REduced.sort_coord.nodups.bam M=$head.REduced.sort_coord.dup_metrics AS=true REMOVE_DUPLICATES=true" );
 #run_cmd( "${picard_head}SortSam.jar $opts I=$head.REduced.sort_coord.nodups.bam O=$head.REduced.nodups.bam SO=queryname" );
-run_cmd( "$samtools view -F12 $head.REduced$nodups.bam -b -o $head.REduced$nodups.paired_only.bam" );
+run_cmd( "$samtools view -F2060 $head.REduced$nodups.bam -b -o $head.REduced$nodups.paired_only.bam" );
 run_cmd( "$samtools flagstat $head.REduced$nodups.paired_only.bam > $head.REduced$nodups.paired_only.flagstat" );
